@@ -1,5 +1,5 @@
 import * as React from "react";
-// import { StudentList, StudentCreate, StudentShow, StudentEdit } from './students';
+import { StudentList, StudentCreate, StudentShow, StudentEdit } from './students';
 import { Admin, Resource, ListGuesser } from "react-admin";
 // import { StaffList, StaffEdit, StaffCreate,StaffShow} from './staff';
 // import { ParentList, ParentEdit, ParentCreate, ParentShow } from './parents';
@@ -27,7 +27,7 @@ class App extends React.Component {
         dataProvider={dataProvider}
         authProvider={authProvider}
       >
-        <Resource name="students" list={ListGuesser} />
+        <Resource name="students" list={StudentList} />
       </Admin>
     );
   }
