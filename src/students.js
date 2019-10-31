@@ -63,32 +63,32 @@ const StudentEdit = props => (
         <NumberInput source="subject1[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 2">
-        <TextField source="subject2[0]" label="" />
-        <TextField source="subject2[1]" label="Subject 2 Code" />
+        <TextInput source="subject2[0]" label="" />
+        <TextInput source="subject2[1]" label="Subject 2 Code" />
         <NumberInput source="subject2[2]" label="CIE 1" />
         <NumberInput source="subject2[3]" label="CIE 2" />
         <NumberInput source="subject2[4]" label="CIE 3" />
         <NumberInput source="subject2[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 3">
-        <TextField source="subject3[0]" label="" />
-        <TextField source="subject3[1]" label="Subject 3 Code" />
+        <TextInput source="subject3[0]" label="" />
+        <TextInput source="subject3[1]" label="Subject 3 Code" />
         <NumberInput source="subject3[2]" label="CIE 1" />
         <NumberInput source="subject3[3]" label="CIE 2" />
         <NumberInput source="subject3[4]" label="CIE 3" />
         <NumberInput source="subject3[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 4">
-        <TextField source="subject4[0]" label="" />
-        <TextField source="subject4[1]" label="Subject 4 Code" />
+        <TextInput source="subject4[0]" label="" />
+        <TextInput source="subject4[1]" label="Subject 4 Code" />
         <NumberInput source="subject4[2]" label="CIE 1" />
         <NumberInput source="subject4[3]" label="CIE 2" />
         <NumberInput source="subject4[4]" label="CIE 3" />
         <NumberInput source="subject4[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 5">
-        <TextField source="subject5[0]" label="" />
-        <TextField source="subject5[1]" label="Subject 5 Code" />
+        <TextInput source="subject5[0]" label="" />
+        <TextInput source="subject5[1]" label="Subject 5 Code" />
         <NumberInput source="subject5[2]" label="CIE 1" />
         <NumberInput source="subject5[3]" label="CIE 2" />
         <NumberInput source="subject5[4]" label="CIE 3" />
@@ -122,32 +122,32 @@ const StudentCreate = props => (
         <NumberInput source="subject1[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 2">
-        <TextField source="subject2[0]" label="" />
-        <TextField source="subject2[1]" label="Subject 2 Code" />
+        <TextInput source="subject2[0]" label="" />
+        <TextInput source="subject2[1]" label="Subject 2 Code" />
         <NumberInput source="subject2[2]" label="CIE 1" />
         <NumberInput source="subject2[3]" label="CIE 2" />
         <NumberInput source="subject2[4]" label="CIE 3" />
         <NumberInput source="subject2[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 3">
-        <TextField source="subject3[0]" label="" />
-        <TextField source="subject3[1]" label="Subject 3 Code" />
+        <TextInput source="subject3[0]" label="" />
+        <TextInput source="subject3[1]" label="Subject 3 Code" />
         <NumberInput source="subject3[2]" label="CIE 1" />
         <NumberInput source="subject3[3]" label="CIE 2" />
         <NumberInput source="subject3[4]" label="CIE 3" />
         <NumberInput source="subject3[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 4">
-        <TextField source="subject4[0]" label="" />
-        <TextField source="subject4[1]" label="Subject 4 Code" />
+        <TextInput source="subject4[0]" label="" />
+        <TextInput source="subject4[1]" label="Subject 4 Code" />
         <NumberInput source="subject4[2]" label="CIE 1" />
         <NumberInput source="subject4[3]" label="CIE 2" />
         <NumberInput source="subject4[4]" label="CIE 3" />
         <NumberInput source="subject4[5]" label="Final" />
       </FormTab>
       <FormTab label="Subject 5">
-        <TextField source="subject5[0]" label="" />
-        <TextField source="subject5[1]" label="Subject 5 Code" />
+        <TextInput source="subject5[0]" label="" />
+        <TextInput source="subject5[1]" label="Subject 5 Code" />
         <NumberInput source="subject5[2]" label="CIE 1" />
         <NumberInput source="subject5[3]" label="CIE 2" />
         <NumberInput source="subject5[4]" label="CIE 3" />
