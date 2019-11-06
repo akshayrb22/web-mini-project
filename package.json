@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase": "^7.2.3",
+    "ra-data-firestore-client": "^0.1.14",
     "ra-input-rich-text": "^2.3.0",
     "react": "^16.5.1",
     "react-admin": "^2.9.8",
