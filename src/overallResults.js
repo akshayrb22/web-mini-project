@@ -18,7 +18,7 @@ import { Datagrid, List, TextField, NumberField, Query } from "react-admin";
 export const ResultsList = props => (
     <List {...props}>
         <Datagrid>
-            <NumberField source={} label="Students Attempted"/>
+            <NumberField source="" label="Students Attempted"/>
             <NumberField source="" label="Pass Percentage"/>
             <NumberField source="" label="CIE Minimum" />
             <NumberField source="" label="CIE Maximum" />

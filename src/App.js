@@ -14,7 +14,7 @@ import {
   FirebaseAuthProvider
 } from "react-admin-firebase";
 import { SubjectResultList } from "./subjectResults";
-import {getCount} from "./firebaseInteractions";
+// import {getCount} from "./firebaseInteractions";
 const config = require("./FIREBASE_CONFIG.js").config;
 
 const authProvider = FirebaseAuthProvider(config);
@@ -49,5 +49,5 @@ class App extends React.Component {
     );
   }
 }
-console.log(getCount());
+// console.log(getCount());
 export default App;

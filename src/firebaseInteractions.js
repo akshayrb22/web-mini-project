@@ -18,17 +18,15 @@ var db = firebase.firestore(app);
 
 
 var studentsRef = db.collection("students");
-export function getCount() {
-  var query = studentsRef.get();
-  return query;
-}
+
 let count = 0;
 studentsRef.get().then(function(querySnapshot) {
   querySnapshot.forEach(function(doc) {
       // doc.data() is never undefined for query doc snapshots
       count += 1;
-      console.log(doc.id, " => ", doc.data());
+      // console.log(doc.id, " => ", doc.data());
       console.log(count);
+
   });
 });
 console.log(count);
