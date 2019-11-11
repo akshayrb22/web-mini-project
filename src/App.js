@@ -5,7 +5,7 @@ import {
   StudentEdit,
   StudentCreate
 } from "./students";
-import { Admin, Resource } from "react-admin";
+import { Admin, Resource, ListGuesser } from "react-admin";
 import { ResultsList } from "./overallResults";
 // import { ParentList, ParentEdit, ParentCreate, ParentShow } from './parents';
 import {
@@ -14,7 +14,6 @@ import {
   FirebaseAuthProvider
 } from "react-admin-firebase";
 import { SubjectResultList } from "./subjectResults";
-// import {getCount} from "./firebaseInteractions";
 const config = require("./FIREBASE_CONFIG.js").config;
 
 const authProvider = FirebaseAuthProvider(config);
@@ -22,7 +21,7 @@ const dataProvider = FirebaseDataProvider(config);
 
 
 const options = {
-  observe: ["students"]
+  observe: ["students", "subject-stats"]
 };
 const firebaseRealtime = FirebaseRealTimeSaga(dataProvider, options);
 
@@ -49,5 +48,4 @@ class App extends React.Component {
     );
   }
 }
-// console.log(getCount());
 export default App;
