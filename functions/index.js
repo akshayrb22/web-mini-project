@@ -12,29 +12,30 @@ const firebase = require("firebase");
 const config = require("./FIREBASE_CONFIG.js").config;
 var app = firebase.initializeApp(config);
 var db = firebase.firestore(app);
-const increment = firebase.firestore.FieldValue.increment(1);
-const decrement = firebase.firestore.FieldValue.increment(-1);
-exports.updateSubjectCount = functions.firestore
-	.document("students/{documentID}")
-	.onWrite((change, context) => {
-		var countRef = db.collection("subject-stats").doc("--count--");
-		if (!change.before.exists) {
-			// New document Created : add one to count
-			countRef.update({ count: increment });
-		} else if (change.before.exists && change.after.exists) {
-			// Updating existing document : Do nothing
-		} else if (!change.after.exists) {
-			// Deleting document : subtract one from count
-			countRef.update({ count: decrement });
-		}
-		return;
-	});
+// const increment = firebase.firestore.FieldValue.increment(1);
+// const decrement = firebase.firestore.FieldValue.increment(-1);
+// exports.updateSubjectCount = functions.firestore
+// 	.document("students/{documentID}")
+// 	.onWrite((change, context) => {
+// 		var countRef = db.collection("subject-stats").doc("--count--");
+// 		if (!change.before.exists) {
+// 			// New document Created : add one to count
+// 			countRef.update({ count: increment });
+// 		} else if (change.before.exists && change.after.exists) {
+// 			// Updating existing document : Do nothing
+// 		} else if (!change.after.exists) {
+// 			// Deleting document : subtract one from count
+// 			countRef.update({ count: decrement });
+// 		}
+// 		return;
+// 	});
 exports.updateIndividualSubjectStats = functions.firestore
 	.document("students/{documentID}")
 	.onWrite((change, context) => {
 		let subject_cie_list = [[], [], [], [], []];
 		let sem_list = [[], [], [], [], []];
 		let final_list = [[], [], [], [], []];
+		let subject_names = [];
 		db.collection("students")
 			.get()
 			.then(function(querySnapshot) {
@@ -50,6 +51,7 @@ exports.updateIndividualSubjectStats = functions.firestore
 							).toFixed(2)
 						);
 						sem_list[i].push(doc.get("subject" + (i + 1) + ".sem"));
+						subject_names.push(doc.get("subject" + (i + 1) + ".name"));
 					}
 				});
 				let num_students = subject_cie_list[0].length;
@@ -73,18 +75,6 @@ exports.updateIndividualSubjectStats = functions.firestore
 				for (let i = 0; i < pass_rate.length; i++) {
 					pass_rate[i] = ((pass_count[i] / num_students) * 100).toFixed(2);
 				}
-				// console.log(
-				// 	"Num Students: " +
-				// 		num_students +
-				// 		"\n\nPass Rate:" +
-				// 		pass_rate +
-				// 		"\n\nSubject CIE List:" +
-				// 		subject_cie_list +
-				// 		"\n\nSemester list:" +
-				// 		sem_list +
-				// 		"\n\nFinal Marks List:" +
-				// 		final_list
-				// );
 				let overall_stats = compute_subject_stats(
 					final_list,
 					sem_list,
@@ -119,10 +109,10 @@ exports.updateIndividualSubjectStats = functions.firestore
 						final_min: final_min[i],
 						final_max: final_max[i],
 						final_avg: final_avg[i],
-
-						pass_rate: parseInt(pass_rate[i])
+						count: num_students,
+						pass_rate: parseInt(pass_rate[i]),
+						name: subject_names[i]
 					};
-
 					let set_doc = db
 						.collection("subject-stats")
 						.doc("subject" + (i + 1).toString())
@@ -170,13 +160,9 @@ function compute_subject_stats(final_list, sem_list, subject_cie_list) {
 		sem_avg[i] = (sum / final_list[i].length).toFixed(2);
 
 		sum = 0;
-		console.log(
-			"Subject " + (i + 1).toString() + " CIE List: " + 	subject_cie_list[i]
-		);
 		sum = subject_cie_list[i].reduce(
 			(previous, current) => (current = Number(current) + Number(previous))
 		);
-		console.log("Subject " + (i + 1).toString() + " sum: " + sum);
 		cie_avg[i] = (sum / final_list[i].length).toFixed(2);
 	}
 	final_avg = final_avg.map(Number);

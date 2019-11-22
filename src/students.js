@@ -24,8 +24,8 @@ import {
 const StudentList = props => (
   <List {...props}>
     <Datagrid rowClick="edit">
-      <TextField source="batch" />
-      <TextField source="name" />
+      <TextField source="batch" label="Batch"/>
+      <TextField source="name" label="Name"/>
       <TextField source="usn" label="USN" />
       <TextField source="subject1[name]" label="Subject 1" />
       <TextField source="subject2[name]" label="Subject 2" />
