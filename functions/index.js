@@ -174,3 +174,267 @@ function compute_subject_stats(final_list, sem_list, subject_cie_list) {
 	overall_stats = [cie_stats, sem_stats, final_stats];
 	return overall_stats;
 }
+
+exports.updateSubjectBands = functions.firestore
+	.document("students/{documentID}")
+	.onWrite((change, context) => {
+		let cie1_list = [[], [], [], [], []];
+		let cie2_list = [[], [], [], [], []];
+		let cie3_list = [[], [], [], [], []];
+		let sem_list = [[], [], [], [], []];
+		let final_list = [[], [], [], [], []];
+		let current_cie1, current_cie2, current_cie3;
+
+		db.collection("students")
+			.get()
+			.then(function(querySnapshot) {
+				querySnapshot.forEach(function(doc) {
+					// doc.data() is never undefined for query doc snapshots
+					for (let i = 0; i < 5; i++) {
+						current_cie1 = doc.get("subject" + (i + 1) + ".cie1");
+						current_cie2 = doc.get("subject" + (i + 1) + ".cie2");
+						current_cie3 = doc.get("subject" + (i + 1) + ".cie3");
+						current_sem = doc.get("subject" + (i + 1) + ".sem");
+						cie1_list[i].push(current_cie1);
+						cie2_list[i].push(current_cie2);
+						cie3_list[i].push(current_cie3);
+						sem_list[i].push(current_sem);
+						current_final = cie_average(current_cie1, current_cie2, current_cie3) + current_sem;
+						final_list[i].push(current_final);
+					}
+				});
+				// console.log(final_list);
+				let num_subjects = 5;
+				let num_students = cie1_list[0].length;
+				let red_band_object = {cie1: [[], [], [], [], []], cie2: [[], [], [], [], []], cie3: [[], [], [], [], []], sem: [[], [], [], [], []], final: [[], [], [], [], []]};
+				let yellow_band_object = {cie1: [[], [], [], [], []], cie2: [[], [], [], [], []], cie3: [[], [], [], [], []], sem: [[], [], [], [], []], final: [[], [], [], [], []]};
+				let green_band_object = {cie1: [[], [], [], [], []], cie2: [[], [], [], [], []], cie3: [[], [], [], [], []], sem: [[], [], [], [], []], final: [[], [], [], [], []]};
+				for (let i = 0; i < num_subjects; i++) {
+					for (let j = 0; j < num_students; j++) {
+						if (cie1_list[i][j] < 0.65 * 20) {
+							red_band_object.cie1[i].push(cie1_list[i][j]).toFixed(2);
+						} else if (cie1_list[i][j] > 0.8 * 20) {
+							green_band_object.cie1[i].push(cie1_list[i][j]).toFixed(2);
+						} else {
+							yellow_band_object.cie1[i].push(cie1_list[i][j]).toFixed(2);
+						}
+
+						if (cie2_list[i][j] < 0.65 * 20) {
+							red_band_object.cie2[i].push(cie2_list[i][j]).toFixed(2);
+						} else if (cie2_list[i][j] > 0.8 * 20) {
+							green_band_object.cie2[i].push(cie2_list[i][j]).toFixed(2);
+						} else {
+							yellow_band_object.cie2[i].push(cie2_list[i][j]).toFixed(2);
+						}
+
+						if (cie3_list[i][j] < 0.65 * 20) {
+							red_band_object.cie3[i].push(cie3_list[i][j]).toFixed(2);
+						} else if (cie3_list[i][j] > 0.8 * 20) {
+							green_band_object.cie3[i].push(cie3_list[i][j]).toFixed(2);
+						} else {
+							yellow_band_object.cie3[i].push(cie3_list[i][j]).toFixed(2);
+						}
+
+						if (sem_list[i][j] < 0.65 * 80) {
+							red_band_object.sem[i].push(sem_list[i][j]).toFixed(2);
+						} else if (sem_list[i][j] > 0.8 * 80) {
+							green_band_object.sem[i].push(sem_list[i][j]).toFixed(2);
+						} else {
+							yellow_band_object.sem[i].push(sem_list[i][j]).toFixed(2);
+						}
+
+						if (final_list[i][j] < 0.65 * 100) {
+							red_band_object.final[i].push(final_list[i][j]).toFixed(2);
+						} else if (final_list[i][j] > 0.8 * 100) {
+							green_band_object.final[i].push(final_list[i][j]).toFixed(2);
+						} else {
+							yellow_band_object.final[i].push(final_list[i][j]).toFixed(2);
+						}
+					}
+				}
+				let cie1_data = {
+					name: "CIE 1",
+					subject1: {
+						name: "WEB",
+						red_band: ((red_band_object.cie1[0].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie1[0].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie1[0].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject2: {
+						name: "SA",
+						red_band: ((red_band_object.cie1[1].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie1[1].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie1[1].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject3: {
+						name: "ML",
+						red_band: ((red_band_object.cie1[2].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie1[2].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie1[2].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject4: {
+						name: "INS",
+						red_band: ((red_band_object.cie1[3].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie1[3].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie1[3].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject5: {
+						name: "IMS",
+						red_band: ((red_band_object.cie1[4].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie1[4].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie1[4].length/num_students) * 100.0).toFixed(2)
+					}
+				};
+				db.collection("subjects").doc("CIE1").set(cie1_data);
+
+				
+				let cie2_data = {
+					name: "CIE 2",
+					subject1: {
+						name: "WEB",
+						red_band: ((red_band_object.cie2[0].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie2[0].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie2[0].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject2: {
+						name: "SA",
+						red_band: ((red_band_object.cie2[1].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie2[1].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie2[1].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject3: {
+						name: "ML",
+						red_band: ((red_band_object.cie2[2].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie2[2].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie2[2].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject4: {
+						name: "INS",
+						red_band: ((red_band_object.cie2[3].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie2[3].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie2[3].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject5: {
+						name: "IMS",
+						red_band: ((red_band_object.cie2[4].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie2[4].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie2[4].length/num_students) * 100.0).toFixed(2)
+					}
+				};
+				db.collection("subjects").doc("CIE2").set(cie2_data);
+
+				let cie3_data = {
+					name: "CIE 3",
+					subject1: {
+						name: "WEB",
+						red_band: ((red_band_object.cie3[0].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie3[0].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie3[0].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject2: {
+						name: "SA",
+						red_band: ((red_band_object.cie3[1].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie3[1].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie3[1].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject3: {
+						name: "ML",
+						red_band: ((red_band_object.cie3[2].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie3[2].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie3[2].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject4: {
+						name: "INS",
+						red_band: ((red_band_object.cie3[3].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie3[3].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie3[3].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject5: {
+						name: "IMS",
+						red_band: ((red_band_object.cie3[4].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.cie3[4].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.cie3[4].length/num_students) * 100.0).toFixed(2)
+					}
+				};
+				db.collection("subjects").doc("CIE3").set(cie3_data);
+
+				let sem_data = {
+					name: "Semester End Exam",
+					subject1: {
+						name: "WEB",
+						red_band: ((red_band_object.sem[0].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.sem[0].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.sem[0].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject2: {
+						name: "SA",
+						red_band: ((red_band_object.sem[1].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.sem[1].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.sem[1].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject3: {
+						name: "ML",
+						red_band: ((red_band_object.sem[2].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.sem[2].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.sem[2].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject4: {
+						name: "INS",
+						red_band: ((red_band_object.sem[3].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.sem[3].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.sem[3].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject5: {
+						name: "IMS",
+						red_band: ((red_band_object.sem[4].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.sem[4].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.sem[4].length/num_students) * 100.0).toFixed(2)
+					}
+				};
+				db.collection("subjects").doc("SemEnd").set(sem_data);
+
+				let final_data = {
+					name: "Final",
+					subject1: {
+						name: "WEB",
+						red_band: ((red_band_object.final[0].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.final[0].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.final[0].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject2: {
+						name: "SA",
+						red_band: ((red_band_object.final[1].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.final[1].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.final[1].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject3: {
+						name: "ML",
+						red_band: ((red_band_object.final[2].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.final[2].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.final[2].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject4: {
+						name: "INS",
+						red_band: ((red_band_object.final[3].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.final[3].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.final[3].length/num_students) * 100.0).toFixed(2)
+					}, 
+					subject5: {
+						name: "IMS",
+						red_band: ((red_band_object.final[4].length/num_students) * 100.0).toFixed(2), 
+						yellow_band: ((yellow_band_object.final[4].length/num_students) * 100.0).toFixed(2), 
+						green_band: ((green_band_object.final[4].length/num_students) * 100.0).toFixed(2)
+					}
+				};
+				db.collection("subjects").doc("Final").set(final_data);
+				
+				// console.log(red_band_object);
+				// console.log(yellow_band_object)
+				// console.log(green_band_object);
+				
+				return cie1_list;
+			})
+			.catch(function(error) {
+				console.log("Error getting documents: ", error);
+			});
+	});
